@@ -36,9 +36,12 @@ npm run reset-project  # Moves starter code to app-example and creates blank app
 
 ### Routing Structure
 This app uses Expo Router with file-based routing:
-- `app/_layout.tsx` - Root layout with Stack navigator
-- `app/index.tsx` - Home screen
+- `app/_layout.tsx` - Root layout with Stack navigator and font loading
+- `app/(tabs)/` - Tab-based navigation group (home, cart, search, profile)
+- `app/(auth)/` - Authentication screens group (sign-in, sign-up)
 - `app/globals.css` - Global Tailwind CSS styles (imported in index.tsx)
+
+**Font Loading**: The root layout (`app/_layout.tsx`) loads 5 Quicksand font weights using `expo-font` and `useFonts` hook. The splash screen remains visible until fonts are loaded.
 
 ### Styling with NativeWind
 The app uses **NativeWind v4** for styling, which brings Tailwind CSS to React Native:
@@ -61,6 +64,10 @@ The app uses **NativeWind v4** for styling, which brings Tailwind CSS to React N
 - `jsxImportSource: "nativewind"` in babel-preset-expo
 - `nativewind/babel` preset
 
+**Metro Configuration**: The Metro bundler is configured with NativeWind integration in `metro.config.js`:
+- Uses `withNativeWind()` wrapper around the default Expo config
+- Input CSS file specified as `./app/globals.css`
+
 ### Custom Design System
 The project has a custom Tailwind theme configured in `tailwind.config.js`:
 
@@ -76,6 +83,11 @@ The project has a custom Tailwind theme configured in `tailwind.config.js`:
 - Usage: `font-quicksand`, `font-quicksand-bold`, `font-quicksand-semibold`, `font-quicksand-light`, `font-quicksand-medium`
 - Font files located in `assets/fonts/`
 
+**Custom CSS Classes** (defined in `app/globals.css`):
+- **Utility classes**: `flex-center`, `flex-between`, `flex-start`
+- **Typography classes**: `h1-bold`, `h3-bold`, `base-bold`, `base-semibold`, `base-regular`, `paragraph-bold`, `paragraph-semibold`, `paragraph-medium`, `body-medium`, `body-regular`, `small-bold`
+- **Component classes**: `cart-btn`, `cart-badge`, `cart-item`, `custom-btn`, `custom-header`, `label`, `input`, `filter`, `menu-card`, `profile-field`, `searchbar`, `tab-icon`, `offer-card`, `profile-avatar`
+
 ### Path Aliases
 The project uses `@/*` as an alias for the root directory (configured in `tsconfig.json`).
 
@@ -85,6 +97,12 @@ Assets are centrally managed through `constants/index.ts`:
 - Static data structures: `CATEGORIES`, `offers`, `sides`, `toppings`
 - Import pattern: `import { images, CATEGORIES, offers } from '@/constants'`
 - Type declarations for image imports in `images.d.ts` (.png, .jpg, .jpeg, .gif, .svg)
+
+### Component Structure
+Components are organized in the `components/` directory:
+- Components use the `@/constants` import for accessing images and data
+- Components follow React Native patterns with NativeWind styling
+- Example: `CartButton.tsx` demonstrates the component pattern with custom CSS classes
 
 ## Key Configuration Details
 
