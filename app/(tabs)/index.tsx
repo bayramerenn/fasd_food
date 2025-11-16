@@ -11,7 +11,7 @@ import {
   View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import "./globals.css";
+import "../globals.css";
 
 export default function Index() {
   return (
