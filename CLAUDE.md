@@ -4,7 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React Native mobile application built with Expo Router and TypeScript. The app uses file-based routing and supports iOS, Android, and web platforms. The project is configured with React 19.1.0, React Native 0.81.5, and Expo SDK 54.
+This is a **fast food ordering mobile application** built with Expo Router, TypeScript, and NativeWind (Tailwind CSS for React Native). The app uses file-based routing and supports iOS, Android, and web platforms. The project is configured with React 19.1.0, React Native 0.81.5, and Expo SDK 54.
+
+**Application Features**:
+- Food product categories (Burger, Pizza, Wrap, Burrito)
+- Customizable orders with toppings (Avocado, Bacon, Cheese, etc.)
+- Side dish selection (Fries, Onion Rings, etc.)
+- Promotional offers system
 
 ## Development Commands
 
@@ -30,48 +36,82 @@ npm run reset-project  # Moves starter code to app-example and creates blank app
 
 ### Routing Structure
 This app uses Expo Router with file-based routing:
-- `app/_layout.tsx` - Root layout with navigation theme provider and Stack navigator
-- `app/(tabs)/_layout.tsx` - Tab navigation layout (bottom tabs)
-- `app/(tabs)/index.tsx` - Home tab screen
-- `app/(tabs)/explore.tsx` - Explore tab screen
-- `app/modal.tsx` - Modal screen (accessed via Stack navigation)
+- `app/_layout.tsx` - Root layout with Stack navigator
+- `app/index.tsx` - Home screen
+- `app/globals.css` - Global Tailwind CSS styles (imported in index.tsx)
 
-The `unstable_settings.anchor` in `app/_layout.tsx` is set to `'(tabs)'`, making the tab navigator the initial route.
+### Styling with NativeWind
+The app uses **NativeWind v4** for styling, which brings Tailwind CSS to React Native:
 
-### Theming System
-The app has a comprehensive theming system that supports light and dark modes:
+**Configuration Files**:
+- `tailwind.config.js` - Tailwind configuration with NativeWind preset
+- `metro.config.js` - Metro bundler configured with `withNativeWind()` wrapper
+- `app/globals.css` - Contains Tailwind directives (`@tailwind base/components/utilities`)
 
-**Theme Definition**: `constants/theme.ts` exports `Colors` object with light/dark color schemes and platform-specific `Fonts` configurations.
+**Usage**: Use Tailwind className directly on React Native components:
+```tsx
+<View className="flex-1 items-center justify-center bg-white">
+  <Text className="text-xl font-bold text-blue-500">Hello</Text>
+</View>
+```
 
-**Theme Hooks**:
-- `use-color-scheme.ts` - Detects system color scheme (has separate `.web.ts` implementation)
-- `use-theme-color.ts` - Hook that resolves theme-aware colors from the Colors constant
+**Content Paths**: Tailwind scans `./app/**/*.{js,jsx,ts,tsx}` and `./components/**/*.{js,jsx,ts,tsx}` for class names.
 
-**Themed Components**: `ThemedText` and `ThemedView` automatically adapt to the current color scheme using the `useThemeColor` hook. Both accept optional `lightColor` and `darkColor` props to override defaults.
+**Critical Babel Configuration**: NativeWind requires specific Babel setup in `babel.config.js`:
+- `jsxImportSource: "nativewind"` in babel-preset-expo
+- `nativewind/babel` preset
 
-### Component Organization
-- `components/` - Reusable components
-  - `themed-*.tsx` - Theme-aware wrapper components
-  - `haptic-tab.tsx` - Tab button with haptic feedback
-  - `parallax-scroll-view.tsx` - Scroll view with parallax header effect
-  - `ui/` - UI primitives (IconSymbol, Collapsible, etc.)
+### Custom Design System
+The project has a custom Tailwind theme configured in `tailwind.config.js`:
+
+**Colors**:
+- `primary`: `#FE8C00` (orange) - Main brand color
+- `error`: `#F14141` - Error states
+- `success`: `#2F9B65` - Success states
+- Custom gray palette: `gray-100`, `gray-200`
+- `dark-100`: Dark mode color
+
+**Typography**:
+- Font family: **Quicksand** (5 weights available)
+- Usage: `font-quicksand`, `font-quicksand-bold`, `font-quicksand-semibold`, `font-quicksand-light`, `font-quicksand-medium`
+- Font files located in `assets/fonts/`
 
 ### Path Aliases
 The project uses `@/*` as an alias for the root directory (configured in `tsconfig.json`).
 
+### Asset Management
+Assets are centrally managed through `constants/index.ts`:
+- All icons and images are imported and exported as the `images` object
+- Static data structures: `CATEGORIES`, `offers`, `sides`, `toppings`
+- Import pattern: `import { images, CATEGORIES, offers } from '@/constants'`
+- Type declarations for image imports in `images.d.ts` (.png, .jpg, .jpeg, .gif, .svg)
+
 ## Key Configuration Details
 
 ### Expo Configuration (app.json)
-- App uses the new architecture (`newArchEnabled: true`)
-- Typed routes enabled (`experiments.typedRoutes: true`)
-- React compiler enabled (`experiments.reactCompiler: true`)
+- App uses the **new architecture** (`newArchEnabled: true`) - Fabric renderer and TurboModules enabled
+- Typed routes enabled (`experiments.typedRoutes: true`) - Type-safe navigation
+- React compiler enabled (`experiments.reactCompiler: true`) - Automatic optimization
 - Edge-to-edge mode on Android (`edgeToEdgeEnabled: true`)
 - Custom URL scheme: `fastfood://`
 
 ### TypeScript
 - Strict mode enabled
 - Uses Expo's base TypeScript config
+- Path alias `@/*` configured for root imports
+- Type declarations: `nativewind-env.d.ts`, `images.d.ts`
 - All `.ts` and `.tsx` files are included, plus `.expo/types/**/*.ts`
 
 ### Platform-Specific Files
-Components may have platform-specific implementations using extensions like `.ios.tsx` and `.web.ts` (e.g., `use-color-scheme.web.ts`, `icon-symbol.ios.tsx`).
+Components may have platform-specific implementations using extensions like `.ios.tsx` and `.web.ts`.
+
+### Key Dependencies
+- **Navigation**: React Navigation v7 with bottom tabs support (installed but not yet implemented)
+- **Animations**: React Native Reanimated v3.17.4 and Gesture Handler v2.28.0
+- **Performance**: `react-native-worklets` for UI thread JavaScript execution
+- **Image Handling**: `expo-image` for optimized image loading
+
+## Notes
+
+- The original starter code with themed components has been moved to `app-example/` directory
+- Current app uses NativeWind for all styling instead of the themed component system
